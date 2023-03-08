@@ -7,18 +7,16 @@ var logger = require('morgan')
 const session = require('express-session')
 var indexRouter = require('./routes/index')
 
-// var usersRouter = require('./routes/users');
-
-interface Message {
-  sender: Sender
-  text: String
-}
-
 declare module 'express-session' {
   interface Session {
-    states: {
-      messages: Message[]
-    }
+    states:
+      | {
+          depth: number | undefined
+          location: string | undefined
+          image: string | undefined
+          step: number // 0,1,2,3
+        }
+      | undefined
   }
 }
 
