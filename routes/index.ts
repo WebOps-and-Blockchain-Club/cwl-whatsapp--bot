@@ -31,7 +31,9 @@ router.post('/message', async (req, res) => {
             location: '',
             image: '',
           }
-          return res.status(200).end(createMessage('Enter the location', twiml))
+          return res
+            .status(200)
+            .end(createMessage('Water later is noted, please enter the address', twiml))
         }
         throw Error('FORMAT')
       case 1:
@@ -42,7 +44,14 @@ router.post('/message', async (req, res) => {
             location: receivedMessage,
             image: '',
           }
-          return res.status(200).end(createMessage('Send an image (optional)', twiml))
+          return res
+            .status(200)
+            .end(
+              createMessage(
+                ' Please send a photo of the noted address. If you are unable or unwilling to do so, please reply with "done"',
+                twiml,
+              ),
+            )
         }
         throw Error('FORMAT')
       case 2:
