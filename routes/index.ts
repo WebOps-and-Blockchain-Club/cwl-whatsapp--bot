@@ -6,7 +6,6 @@ const fetch = require('node-fetch')
 const dotenv = require('dotenv')
 dotenv.config()
 import AppDataSource from '../config'
-import { Sender } from '../utils/types.js'
 import createMessage from '../utils/sendMessages.js'
 
 router.post('/message', async (req, res) => {
@@ -22,6 +21,7 @@ router.post('/message', async (req, res) => {
       step: 0,
     }
     const twiml = new MessagingResponse()
+    res.writeHead(200, { 'Content-Type': 'text/xml' })
     switch (req.session.states.step) {
       case 0:
         if (receivedMessage && /^\d+$/.test(receivedMessage)) {
@@ -51,7 +51,6 @@ router.post('/message', async (req, res) => {
         req.session.states.step = 0
     }
 
-    res.writeHead(200, { 'Content-Type': 'text/xml' })
     await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${JSON.stringify(
         req.session.states.location,
@@ -88,7 +87,7 @@ router.post('/message', async (req, res) => {
     if (error.message === 'FORMAT') {
       console.log('Reaching')
       const responseMessage =
-        'Enter a valid ' + req.session.states?.step === '0' ? 'depth' : 'location'
+        req.session.states?.step === 0 ? 'Enter a valid depth' : 'Enter a valid location'
       return res.status(400).end(createMessage(responseMessage, twiml))
     }
     return res.status(500).end(createMessage('An error occurred', twiml))
